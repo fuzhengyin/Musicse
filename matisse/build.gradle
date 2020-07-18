@@ -49,8 +49,8 @@ dependencies {
 // jcenter configuration for novoda's bintray-release
 // $ ./gradlew clean build bintrayUpload -PbintrayUser=BINTRAY_USERNAME -PbintrayKey=BINTRAY_KEY -PdryRun=false
 publish {
-    userOrg = 'zhihu'
-    groupId = 'com.zhihu.android'
+    userOrg = 'Daisytank'
+    groupId = 'com.daisytank.android'
     artifactId = 'matisse'
     publishVersion = '0.5.3-beta3'
     desc = 'A well-designed local image selector for Android'
