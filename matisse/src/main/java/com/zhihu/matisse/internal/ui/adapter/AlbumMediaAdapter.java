@@ -37,6 +37,8 @@ import com.zhihu.matisse.internal.model.SelectedItemCollection;
 import com.zhihu.matisse.internal.ui.widget.CheckView;
 import com.zhihu.matisse.internal.ui.widget.MediaGrid;
 
+import java.util.ArrayList;
+
 public class AlbumMediaAdapter extends
         RecyclerViewCursorAdapter<RecyclerView.ViewHolder> implements
         MediaGrid.OnMediaGridClickListener {
@@ -174,25 +176,33 @@ public class AlbumMediaAdapter extends
     }
 
     private void updateSelectedItem(Item item, RecyclerView.ViewHolder holder) {
-        if (mSelectionSpec.countable) {
-            int checkedNum = mSelectedCollection.checkedNumOf(item);
-            if (checkedNum == CheckView.UNCHECKED) {
-                if (assertAddSelection(holder.itemView.getContext(), item)) {
-                    mSelectedCollection.add(item);
-                    notifyCheckStateChanged();
-                }
-            } else {
-                mSelectedCollection.remove(item);
+        if (mSelectionSpec.autoapplyModeEnabled()) {
+            if (!mSelectedCollection.isSelected(item)) {
+                mSelectedCollection.overwrite(new ArrayList<Item>(), SelectedItemCollection.COLLECTION_UNDEFINED);
+                mSelectedCollection.add(item);
                 notifyCheckStateChanged();
             }
         } else {
-            if (mSelectedCollection.isSelected(item)) {
-                mSelectedCollection.remove(item);
-                notifyCheckStateChanged();
-            } else {
-                if (assertAddSelection(holder.itemView.getContext(), item)) {
-                    mSelectedCollection.add(item);
+            if (mSelectionSpec.countable) {
+                int checkedNum = mSelectedCollection.checkedNumOf(item);
+                if (checkedNum == CheckView.UNCHECKED) {
+                    if (assertAddSelection(holder.itemView.getContext(), item)) {
+                        mSelectedCollection.add(item);
+                        notifyCheckStateChanged();
+                    }
+                } else {
+                    mSelectedCollection.remove(item);
                     notifyCheckStateChanged();
+                }
+            } else {
+                if (mSelectedCollection.isSelected(item)) {
+                    mSelectedCollection.remove(item);
+                    notifyCheckStateChanged();
+                } else {
+                    if (assertAddSelection(holder.itemView.getContext(), item)) {
+                        mSelectedCollection.add(item);
+                        notifyCheckStateChanged();
+                    }
                 }
             }
         }

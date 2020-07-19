@@ -41,6 +41,7 @@ public final class SelectionSpec {
     public int orientation;
     public boolean countable;
     public int maxSelectable;
+    public boolean autoapplyIfMaxIsOne;
     public int maxImageSelectable;
     public int maxVideoSelectable;
     public List<Filter> filters;
@@ -79,6 +80,7 @@ public final class SelectionSpec {
         orientation = 0;
         countable = false;
         maxSelectable = 1;
+        autoapplyIfMaxIsOne = false;
         maxImageSelectable = 0;
         maxVideoSelectable = 0;
         filters = null;
@@ -97,6 +99,10 @@ public final class SelectionSpec {
 
     public boolean singleSelectionModeEnabled() {
         return !countable && (maxSelectable == 1 || (maxImageSelectable == 1 && maxVideoSelectable == 1));
+    }
+
+    public boolean autoapplyModeEnabled() {
+        return singleSelectionModeEnabled() && autoapplyIfMaxIsOne;
     }
 
     public boolean needOrientationRestriction() {

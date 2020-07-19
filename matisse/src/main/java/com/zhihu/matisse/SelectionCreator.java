@@ -175,6 +175,17 @@ public final class SelectionCreator {
     }
 
     /**
+     * Apply selected item automatically if {@link SelectionSpec#maxSelectable} is 1
+     *
+     * @param autoapplyIfMaxIsOne Apply selected item automatically. Default value is false.
+     * @return {@link SelectionCreator} for fluent API.
+     */
+    public SelectionCreator autoapplyIfMaxIsOne(boolean autoapplyIfMaxIsOne) {
+        mSelectionSpec.autoapplyIfMaxIsOne = autoapplyIfMaxIsOne;
+        return this;
+    }
+
+    /**
      * Add filter to filter each selecting item.
      *
      * @param filter {@link Filter}
