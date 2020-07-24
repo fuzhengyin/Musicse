@@ -25,6 +25,7 @@ import com.zhihu.matisse.R;
 import com.zhihu.matisse.engine.ImageEngine;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.filter.Filter;
+import com.zhihu.matisse.internal.model.SelectedItemCollection;
 import com.zhihu.matisse.listener.OnCheckedListener;
 import com.zhihu.matisse.listener.OnSelectedListener;
 
@@ -97,12 +98,24 @@ public final class SelectionSpec {
         showPreview = true;
     }
 
-    public boolean singleSelectionModeEnabled() {
-        return !countable && (maxSelectable == 1 || (maxImageSelectable == 1 && maxVideoSelectable == 1));
+    public boolean isSingleSelection(int collectionType) {
+        if (collectionType == SelectedItemCollection.COLLECTION_MIXED) {
+            return maxSelectable == 1;
+        } else if (collectionType == SelectedItemCollection.COLLECTION_VIDEO) {
+            return maxVideoSelectable == 1;
+        } else if (collectionType == SelectedItemCollection.COLLECTION_IMAGE) {
+            return maxImageSelectable == 1;
+        } else {
+            return false;
+        }
     }
 
-    public boolean autoapplyModeEnabled() {
-        return singleSelectionModeEnabled() && autoapplyIfMaxIsOne;
+    public boolean singleSelectionModeEnabled(int collectionType) {
+        return !countable && isSingleSelection(collectionType);
+    }
+
+    public boolean autoapplyModeEnabled(int collectionType) {
+        return isSingleSelection(collectionType) && autoapplyIfMaxIsOne;
     }
 
     public boolean needOrientationRestriction() {

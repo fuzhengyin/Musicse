@@ -82,12 +82,13 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.zhihu:
                 Matisse.from(SampleActivity.this)
-                        .choose(MimeType.ofImage(), false)
+                        .choose(MimeType.ofAll(), true)
                         .countable(false)
                         .capture(true)
                         .captureStrategy(
                                 new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "test"))
-                        .maxSelectable(1)
+                        .maxSelectable(9)
+                        .maxSelectablePerMediaType(9, 2)
                         .autoapplyIfMaxIsOne(true)
                         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                         .gridExpectedSize(

@@ -176,7 +176,7 @@ public class AlbumMediaAdapter extends
     }
 
     private void updateSelectedItem(Item item, RecyclerView.ViewHolder holder) {
-        if (mSelectionSpec.autoapplyModeEnabled()) {
+        if (mSelectionSpec.autoapplyModeEnabled(mSelectedCollection.getCollectionType())) {
             if (!mSelectedCollection.isSelected(item)) {
                 mSelectedCollection.overwrite(new ArrayList<Item>(), SelectedItemCollection.COLLECTION_UNDEFINED);
                 mSelectedCollection.add(item);

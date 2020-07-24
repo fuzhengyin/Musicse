@@ -254,7 +254,7 @@ public class MatisseActivity extends AppCompatActivity implements
             mButtonPreview.setEnabled(false);
             mButtonApply.setEnabled(false);
             mButtonApply.setText(getString(R.string.button_apply_default));
-        } else if (selectedCount == 1 && mSpec.singleSelectionModeEnabled()) {
+        } else if (selectedCount == 1 && mSpec.singleSelectionModeEnabled(mSelectedCollection.getCollectionType())) {
             mButtonPreview.setEnabled(true);
             mButtonApply.setText(R.string.button_apply_default);
             mButtonApply.setEnabled(true);
@@ -415,7 +415,7 @@ public class MatisseActivity extends AppCompatActivity implements
                     mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString());
         }
 
-        if (mSpec.autoapplyModeEnabled() && !mSelectedCollection.isEmpty()) {
+        if (mSpec.autoapplyModeEnabled(mSelectedCollection.getCollectionType()) && !mSelectedCollection.isEmpty()) {
             apply();
         }
     }
