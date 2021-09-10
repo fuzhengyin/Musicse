@@ -32,7 +32,7 @@ import java.lang.ref.WeakReference;
 
 public class AlbumMediaCollection implements LoaderManager.LoaderCallbacks<Cursor> {
     private int loaderId;
-    private static int loaderIdBase;
+    private static int loaderIdBase = 1;
     private static final String ARGS_ALBUM = "args_album";
     private static final String ARGS_ENABLE_CAPTURE = "args_enable_capture";
     private WeakReference<Context> mContext;
