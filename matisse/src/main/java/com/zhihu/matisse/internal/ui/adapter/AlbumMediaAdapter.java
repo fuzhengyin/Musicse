@@ -20,6 +20,8 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -47,10 +49,10 @@ public class AlbumMediaAdapter extends
     private static final int VIEW_TYPE_MEDIA = 0x02;
     private final SelectedItemCollection mSelectedCollection;
     private final Drawable mPlaceholder;
-    private SelectionSpec mSelectionSpec;
+    private final SelectionSpec mSelectionSpec;
     private CheckStateListener mCheckStateListener;
     private OnMediaClickListener mOnMediaClickListener;
-    private RecyclerView mRecyclerView;
+    private final RecyclerView mRecyclerView;
     private int mImageResize;
 
     public AlbumMediaAdapter(Context context, SelectedItemCollection selectedCollection, RecyclerView recyclerView) {
@@ -65,25 +67,21 @@ public class AlbumMediaAdapter extends
         mRecyclerView = recyclerView;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_CAPTURE) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.photo_capture_item, parent, false);
             CaptureViewHolder holder = new CaptureViewHolder(v);
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (v.getContext() instanceof OnPhotoCapture) {
-                        ((OnPhotoCapture) v.getContext()).capture();
-                    }
+            holder.itemView.setOnClickListener(v1 -> {
+                if (v1.getContext() instanceof OnPhotoCapture) {
+                    ((OnPhotoCapture) v1.getContext()).capture();
                 }
             });
             return holder;
-        } else if (viewType == VIEW_TYPE_MEDIA) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.media_grid_item, parent, false);
-            return new MediaViewHolder(v);
         }
-        return null;
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.media_grid_item, parent, false);
+        return new MediaViewHolder(v);
     }
 
     @Override
@@ -178,7 +176,7 @@ public class AlbumMediaAdapter extends
     private void updateSelectedItem(Item item, RecyclerView.ViewHolder holder) {
         if (mSelectionSpec.autoapplyModeEnabled(mSelectedCollection.getCollectionType())) {
             if (!mSelectedCollection.isSelected(item)) {
-                mSelectedCollection.overwrite(new ArrayList<Item>(), SelectedItemCollection.COLLECTION_UNDEFINED);
+                mSelectedCollection.overwrite(new ArrayList<>(), SelectedItemCollection.COLLECTION_UNDEFINED);
                 mSelectedCollection.add(item);
                 notifyCheckStateChanged();
             }
@@ -288,7 +286,7 @@ public class AlbumMediaAdapter extends
 
     private static class MediaViewHolder extends RecyclerView.ViewHolder {
 
-        private MediaGrid mMediaGrid;
+        private final MediaGrid mMediaGrid;
 
         MediaViewHolder(View itemView) {
             super(itemView);
@@ -298,7 +296,7 @@ public class AlbumMediaAdapter extends
 
     private static class CaptureViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mHint;
+        private final TextView mHint;
 
         CaptureViewHolder(View itemView) {
             super(itemView);

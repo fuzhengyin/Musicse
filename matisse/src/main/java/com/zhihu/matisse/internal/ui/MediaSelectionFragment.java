@@ -17,14 +17,19 @@ package com.zhihu.matisse.internal.ui;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Album;
@@ -35,6 +40,9 @@ import com.zhihu.matisse.internal.model.SelectedItemCollection;
 import com.zhihu.matisse.internal.ui.adapter.AlbumMediaAdapter;
 import com.zhihu.matisse.internal.ui.widget.MediaGridInset;
 import com.zhihu.matisse.internal.utils.UIUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MediaSelectionFragment extends Fragment implements
         AlbumMediaCollection.AlbumMediaCallbacks, AlbumMediaAdapter.CheckStateListener,
@@ -58,7 +66,7 @@ public class MediaSelectionFragment extends Fragment implements
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof SelectionProvider) {
             mSelectionProvider = (SelectionProvider) context;
@@ -81,17 +89,22 @@ public class MediaSelectionFragment extends Fragment implements
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
     }
+
+    private static final String[] SELECTION_ALL_ARGS = {
+            String.valueOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE),
+            String.valueOf(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO),
+    };
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Album album = getArguments().getParcelable(EXTRA_ALBUM);
 
-        mAdapter = new AlbumMediaAdapter(getContext(),
+        mAdapter = new AlbumMediaAdapter(requireContext(),
                 mSelectionProvider.provideSelectedItemCollection(), mRecyclerView);
         mAdapter.registerCheckStateListener(this);
         mAdapter.registerOnMediaClickListener(this);
@@ -100,7 +113,7 @@ public class MediaSelectionFragment extends Fragment implements
         int spanCount;
         SelectionSpec selectionSpec = SelectionSpec.getInstance();
         if (selectionSpec.gridExpectedSize > 0) {
-            spanCount = UIUtils.spanCount(getContext(), selectionSpec.gridExpectedSize);
+            spanCount = UIUtils.spanCount(requireContext(), selectionSpec.gridExpectedSize);
         } else {
             spanCount = selectionSpec.spanCount;
         }
@@ -109,14 +122,44 @@ public class MediaSelectionFragment extends Fragment implements
         int spacing = getResources().getDimensionPixelSize(R.dimen.media_grid_spacing);
         mRecyclerView.addItemDecoration(new MediaGridInset(spanCount, spacing, false));
         mRecyclerView.setAdapter(mAdapter);
-        mAlbumMediaCollection.onCreate(getActivity(), this);
+        mAlbumMediaCollection.create(requireActivity(), this);
         mAlbumMediaCollection.load(album, selectionSpec.capture);
+
+        String[] projection = {
+                MediaStore.Files.FileColumns._ID,
+                MediaStore.Files.FileColumns.DISPLAY_NAME,
+                MediaStore.MediaColumns.SIZE,
+                MediaStore.Files.FileColumns.DATA
+        };
+        Uri external = MediaStore.Files.getContentUri("external");
+        String selection = "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
+                + " OR "
+                + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?)";
+        //更新相册
+        if (SelectionSpec.getInstance().refresh) {
+            Cursor query = getContext().getContentResolver().query(external, projection, selection, SELECTION_ALL_ARGS, null);
+            if (query!=null){
+                List<String> zeroSize = new ArrayList<>();
+                try {
+                    while (query.moveToNext()) {
+                        String name = query.getString(1);
+                        int size=query.getInt(2);
+                        if (size!=0) continue;
+                        System.out.println(name + " " + query.getString(3));
+                        zeroSize.add(query.getString(3));
+                    }
+                    MediaScannerConnection.scanFile(requireContext(), zeroSize.toArray(new String[0]), null, (path, uri) -> {});
+                }finally {
+                    query.close();
+                }
+            }
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mAlbumMediaCollection.onDestroy();
+        mAlbumMediaCollection.destroy();
     }
 
     public void refreshMediaGrid() {

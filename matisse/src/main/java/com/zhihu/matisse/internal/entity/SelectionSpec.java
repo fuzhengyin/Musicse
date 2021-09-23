@@ -59,6 +59,8 @@ public final class SelectionSpec {
     public int originalMaxSize;
     public OnCheckedListener onCheckedListener;
     public boolean showPreview;
+    public String orderBy;
+    public boolean refresh=false;
 
     private SelectionSpec() {
     }

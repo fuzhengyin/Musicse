@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,6 +100,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .setOnSelectedListener((uriList, pathList) -> {
                             Log.e("onSelected", "onSelected: pathList=" + pathList);
                         })
+                        .orderBy(MediaStore.Images.Media.DATE_ADDED)
+                        .refresh(true)
                         .showSingleMediaType(true)
                         .originalEnable(true)
                         .maxOriginalSize(10)
@@ -116,6 +119,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .countable(false)
                         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                         .maxSelectable(9)
+                        .refresh(true)
                         .originalEnable(true)
                         .maxOriginalSize(10)
                         .imageEngine(new PicassoEngine())

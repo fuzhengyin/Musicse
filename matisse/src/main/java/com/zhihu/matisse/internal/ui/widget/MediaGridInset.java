@@ -16,14 +16,16 @@
 package com.zhihu.matisse.internal.ui.widget;
 
 import android.graphics.Rect;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 public class MediaGridInset extends RecyclerView.ItemDecoration {
 
-    private int mSpanCount;
-    private int mSpacing;
-    private boolean mIncludeEdge;
+    private final int mSpanCount;
+    private final int mSpacing;
+    private final boolean mIncludeEdge;
 
     public MediaGridInset(int spanCount, int spacing, boolean includeEdge) {
         this.mSpanCount = spanCount;
@@ -32,8 +34,8 @@ public class MediaGridInset extends RecyclerView.ItemDecoration {
     }
 
     @Override
-    public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
-                               RecyclerView.State state) {
+    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, RecyclerView parent,
+                               @NonNull RecyclerView.State state) {
         int position = parent.getChildAdapterPosition(view); // item position
         int column = position % mSpanCount; // item column
 

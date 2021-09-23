@@ -120,7 +120,7 @@ public class AlbumMediaLoader extends CursorLoader {
     }
     // ===============================================================
 
-    private static final String ORDER_BY = MediaStore.Images.Media.DATE_ADDED + " DESC";
+    private static final String ORDER_BY = SelectionSpec.getCleanInstance().orderBy + " DESC";
     private final boolean mEnableCapture;
 
     private AlbumMediaLoader(Context context, String selection, String[] selectionArgs, boolean capture) {
@@ -190,8 +190,4 @@ public class AlbumMediaLoader extends CursorLoader {
         return new MergeCursor(new Cursor[]{dummy, result});
     }
 
-    @Override
-    public void onContentChanged() {
-        // FIXME a dirty way to fix loading multiple times
-    }
 }

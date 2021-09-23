@@ -19,6 +19,8 @@ package com.zhihu.matisse.internal.model;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
@@ -36,6 +38,7 @@ public class AlbumCollection implements LoaderManager.LoaderCallbacks<Cursor> {
     private int mCurrentSelection;
     private boolean mLoadFinished;
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Context context = mContext.get();
@@ -47,7 +50,7 @@ public class AlbumCollection implements LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         Context context = mContext.get();
         if (context == null) {
             return;
@@ -60,7 +63,7 @@ public class AlbumCollection implements LoaderManager.LoaderCallbacks<Cursor> {
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         Context context = mContext.get();
         if (context == null) {
             return;
@@ -69,7 +72,7 @@ public class AlbumCollection implements LoaderManager.LoaderCallbacks<Cursor> {
         mCallbacks.onAlbumReset();
     }
 
-    public void onCreate(FragmentActivity activity, AlbumCallbacks callbacks) {
+    public void create(FragmentActivity activity, AlbumCallbacks callbacks) {
         mContext = new WeakReference<Context>(activity);
         mLoaderManager = activity.getSupportLoaderManager();
         mCallbacks = callbacks;
@@ -87,7 +90,7 @@ public class AlbumCollection implements LoaderManager.LoaderCallbacks<Cursor> {
         outState.putInt(STATE_CURRENT_SELECTION, mCurrentSelection);
     }
 
-    public void onDestroy() {
+    public void destroy() {
         if (mLoaderManager != null) {
             mLoaderManager.destroyLoader(LOADER_ID);
         }

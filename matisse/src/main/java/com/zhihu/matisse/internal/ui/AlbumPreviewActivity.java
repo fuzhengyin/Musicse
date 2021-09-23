@@ -46,7 +46,7 @@ public class AlbumPreviewActivity extends BasePreviewActivity implements
             finish();
             return;
         }
-        mCollection.onCreate(this, this);
+        mCollection.create(this, this);
         Album album = getIntent().getParcelableExtra(EXTRA_ALBUM);
         mCollection.load(album);
 
@@ -62,7 +62,7 @@ public class AlbumPreviewActivity extends BasePreviewActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mCollection.onDestroy();
+        mCollection.destroy();
     }
 
     @Override

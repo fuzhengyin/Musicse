@@ -15,13 +15,21 @@
  */
 package com.zhihu.matisse.internal.ui.widget;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.ListPopupWindow;
+
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
@@ -29,14 +37,20 @@ import android.widget.TextView;
 
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Album;
+import com.zhihu.matisse.internal.entity.SelectionSpec;
 import com.zhihu.matisse.internal.utils.Platform;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AlbumsSpinner {
 
     private static final int MAX_SHOWN_COUNT = 6;
     private CursorAdapter mAdapter;
     private TextView mSelected;
-    private ListPopupWindow mListPopupWindow;
+    private final ListPopupWindow mListPopupWindow;
     private AdapterView.OnItemSelectedListener mOnItemSelectedListener;
 
     public AlbumsSpinner(@NonNull Context context) {
@@ -47,14 +61,10 @@ public class AlbumsSpinner {
         mListPopupWindow.setHorizontalOffset((int) (16 * density));
         mListPopupWindow.setVerticalOffset((int) (-48 * density));
 
-        mListPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AlbumsSpinner.this.onItemSelected(parent.getContext(), position);
-                if (mOnItemSelectedListener != null) {
-                    mOnItemSelectedListener.onItemSelected(parent, view, position, id);
-                }
+        mListPopupWindow.setOnItemClickListener((parent, view, position, id) -> {
+            AlbumsSpinner.this.onItemSelected(parent.getContext(), position);
+            if (mOnItemSelectedListener != null) {
+                mOnItemSelectedListener.onItemSelected(parent, view, position, id);
             }
         });
     }
@@ -108,16 +118,12 @@ public class AlbumsSpinner {
         right.setColorFilter(color, PorterDuff.Mode.SRC_IN);
 
         mSelected.setVisibility(View.GONE);
-        mSelected.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                int itemHeight = v.getResources().getDimensionPixelSize(R.dimen.album_item_height);
-                mListPopupWindow.setHeight(
-                        mAdapter.getCount() > MAX_SHOWN_COUNT ? itemHeight * MAX_SHOWN_COUNT
-                                : itemHeight * mAdapter.getCount());
-                mListPopupWindow.show();
-            }
+        mSelected.setOnClickListener(v -> {
+            int itemHeight = v.getResources().getDimensionPixelSize(R.dimen.album_item_height);
+            mListPopupWindow.setHeight(
+                    mAdapter.getCount() > MAX_SHOWN_COUNT ? itemHeight * MAX_SHOWN_COUNT
+                            : itemHeight * mAdapter.getCount());
+            mListPopupWindow.show();
         });
         mSelected.setOnTouchListener(mListPopupWindow.createDragToOpenListener(mSelected));
     }

@@ -17,6 +17,8 @@ package com.zhihu.matisse.internal.ui.adapter;
 
 import android.database.Cursor;
 import android.provider.MediaStore;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHolder> extends
@@ -33,7 +35,7 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
     protected abstract void onBindViewHolder(VH holder, Cursor cursor);
 
     @Override
-    public void onBindViewHolder(VH holder, int position) {
+    public void onBindViewHolder(@NonNull VH holder, int position) {
         if (!isDataValid(mCursor)) {
             throw new IllegalStateException("Cannot bind view holder when cursor is in invalid state.");
         }
