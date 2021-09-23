@@ -19,6 +19,7 @@ package com.zhihu.matisse.internal.entity;
 import android.content.pm.ActivityInfo;
 import android.provider.MediaStore;
 
+import androidx.annotation.StringDef;
 import androidx.annotation.StyleRes;
 
 import com.zhihu.matisse.MimeType;
@@ -30,6 +31,8 @@ import com.zhihu.matisse.internal.model.SelectedItemCollection;
 import com.zhihu.matisse.listener.OnCheckedListener;
 import com.zhihu.matisse.listener.OnSelectedListener;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.Set;
 
@@ -61,6 +64,7 @@ public final class SelectionSpec {
     public OnCheckedListener onCheckedListener;
     public boolean showPreview;
     public String orderBy;
+    public String sortOrder;
     public boolean refresh;
 
     private SelectionSpec() {
@@ -100,6 +104,7 @@ public final class SelectionSpec {
         originalMaxSize = Integer.MAX_VALUE;
         showPreview = true;
         orderBy = MediaStore.MediaColumns.DATE_ADDED;
+        sortOrder = "DESC";
         refresh = false;
     }
 

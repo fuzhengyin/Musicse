@@ -43,6 +43,7 @@ import com.zhihu.matisse.internal.utils.UIUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 public class MediaSelectionFragment extends Fragment implements
         AlbumMediaCollection.AlbumMediaCallbacks, AlbumMediaAdapter.CheckStateListener,
@@ -98,6 +99,16 @@ public class MediaSelectionFragment extends Fragment implements
             String.valueOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE),
             String.valueOf(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO),
     };
+    String[] projection = {
+            MediaStore.Files.FileColumns._ID,
+            MediaStore.Files.FileColumns.DISPLAY_NAME,
+            MediaStore.MediaColumns.SIZE,
+            MediaStore.Files.FileColumns.DATA
+    };
+    Uri external = MediaStore.Files.getContentUri("external");
+    String selection = "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
+            + " OR "
+            + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?)";
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -125,34 +136,32 @@ public class MediaSelectionFragment extends Fragment implements
         mAlbumMediaCollection.create(requireActivity(), this);
         mAlbumMediaCollection.load(album, selectionSpec.capture);
 
-        String[] projection = {
-                MediaStore.Files.FileColumns._ID,
-                MediaStore.Files.FileColumns.DISPLAY_NAME,
-                MediaStore.MediaColumns.SIZE,
-                MediaStore.Files.FileColumns.DATA
-        };
-        Uri external = MediaStore.Files.getContentUri("external");
-        String selection = "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
-                + " OR "
-                + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?)";
         //更新相册
         if (SelectionSpec.getInstance().refresh) {
-            Cursor query = getContext().getContentResolver().query(external, projection, selection, SELECTION_ALL_ARGS, null);
-            if (query!=null){
-                List<String> zeroSize = new ArrayList<>();
-                try {
-                    while (query.moveToNext()) {
-                        String name = query.getString(1);
-                        int size=query.getInt(2);
-                        if (size!=0) continue;
-                        System.out.println(name + " " + query.getString(3));
-                        zeroSize.add(query.getString(3));
+            new Thread(){
+                @Override
+                public void run() {
+                    super.run();
+                    Cursor query = getContext().getContentResolver().query(external, projection, selection, SELECTION_ALL_ARGS, null);
+                    if (query!=null){
+                        List<String> zeroSize = new ArrayList<>();
+                        try {
+                            while (query.moveToNext()) {
+                                String name = query.getString(1);
+                                int size=query.getInt(2);
+                                if (size!=0) continue;
+                                String path = query.getString(3);
+                                System.out.println(name + " " + path);
+                                zeroSize.add(path);
+                            }
+                            MediaScannerConnection.scanFile(requireContext(), zeroSize.toArray(new String[0]), null, (path, uri) -> {});
+                        }finally {
+                            query.close();
+                        }
                     }
-                    MediaScannerConnection.scanFile(requireContext(), zeroSize.toArray(new String[0]), null, (path, uri) -> {});
-                }finally {
-                    query.close();
                 }
-            }
+            }.start();
+
         }
     }
 

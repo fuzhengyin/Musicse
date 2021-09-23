@@ -74,7 +74,7 @@ public final class SelectionCreator {
             MediaStore.MediaColumns.DATE_ADDED
     })
     @interface ORDERBYTIME{}
-    public SelectionCreator orderBy(String orderByP) {
+    public SelectionCreator orderBy(@ORDERBYTIME String orderByP) {
         mSelectionSpec.orderBy = orderByP;
         return this;
     }
@@ -84,6 +84,15 @@ public final class SelectionCreator {
         return this;
     }
 
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({
+            "DESC","ASC"
+    })
+    @interface SortOrder{}
+    public SelectionCreator sortOrder(String sortOrder){
+        mSelectionSpec.sortOrder = sortOrder;
+        return this;
+    }
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @IntDef({
             SCREEN_ORIENTATION_UNSPECIFIED,

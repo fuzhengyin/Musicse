@@ -123,7 +123,7 @@ public class AlbumMediaLoader extends CursorLoader {
     private final boolean mEnableCapture;
 
     private AlbumMediaLoader(Context context, String selection, String[] selectionArgs, boolean capture) {
-        super(context, QUERY_URI, PROJECTION, selection, selectionArgs, SelectionSpec.getInstance().orderBy);
+        super(context, QUERY_URI, PROJECTION, selection, selectionArgs, SelectionSpec.getInstance().orderBy+" "+SelectionSpec.getInstance().sortOrder);
         mEnableCapture = capture;
     }
 
