@@ -17,6 +17,7 @@
 package com.zhihu.matisse.internal.entity;
 
 import android.content.pm.ActivityInfo;
+import android.provider.MediaStore;
 
 import androidx.annotation.StyleRes;
 
@@ -60,7 +61,7 @@ public final class SelectionSpec {
     public OnCheckedListener onCheckedListener;
     public boolean showPreview;
     public String orderBy;
-    public boolean refresh=false;
+    public boolean refresh;
 
     private SelectionSpec() {
     }
@@ -98,6 +99,8 @@ public final class SelectionSpec {
         autoHideToobar = false;
         originalMaxSize = Integer.MAX_VALUE;
         showPreview = true;
+        orderBy = MediaStore.MediaColumns.DATE_ADDED;
+        refresh = false;
     }
 
     public boolean isSingleSelection(int collectionType) {

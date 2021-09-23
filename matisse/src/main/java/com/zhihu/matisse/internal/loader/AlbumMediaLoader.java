@@ -120,11 +120,10 @@ public class AlbumMediaLoader extends CursorLoader {
     }
     // ===============================================================
 
-    private static final String ORDER_BY = SelectionSpec.getCleanInstance().orderBy + " DESC";
     private final boolean mEnableCapture;
 
     private AlbumMediaLoader(Context context, String selection, String[] selectionArgs, boolean capture) {
-        super(context, QUERY_URI, PROJECTION, selection, selectionArgs, ORDER_BY);
+        super(context, QUERY_URI, PROJECTION, selection, selectionArgs, SelectionSpec.getInstance().orderBy);
         mEnableCapture = capture;
     }
 
