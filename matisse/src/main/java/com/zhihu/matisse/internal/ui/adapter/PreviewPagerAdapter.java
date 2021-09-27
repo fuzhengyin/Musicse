@@ -15,6 +15,7 @@
  */
 package com.zhihu.matisse.internal.ui.adapter;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -28,14 +29,15 @@ import java.util.List;
 
 public class PreviewPagerAdapter extends FragmentPagerAdapter {
 
-    private ArrayList<Item> mItems = new ArrayList<>();
-    private OnPrimaryItemSetListener mListener;
+    private final ArrayList<Item> mItems = new ArrayList<>();
+    private final OnPrimaryItemSetListener mListener;
 
     public PreviewPagerAdapter(FragmentManager manager, OnPrimaryItemSetListener listener) {
         super(manager);
         mListener = listener;
     }
 
+    @NonNull
     @Override
     public Fragment getItem(int position) {
         return PreviewItemFragment.newInstance(mItems.get(position));
@@ -47,7 +49,7 @@ public class PreviewPagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+    public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         super.setPrimaryItem(container, position, object);
         if (mListener != null) {
             mListener.onPrimaryItemSet(position);

@@ -57,6 +57,7 @@ public class MediaSelectionFragment extends Fragment implements
     private SelectionProvider mSelectionProvider;
     private AlbumMediaAdapter.CheckStateListener mCheckStateListener;
     private AlbumMediaAdapter.OnMediaClickListener mOnMediaClickListener;
+    private Thread thread;
 
     public static MediaSelectionFragment newInstance(Album album) {
         MediaSelectionFragment fragment = new MediaSelectionFragment();
@@ -138,29 +139,31 @@ public class MediaSelectionFragment extends Fragment implements
 
         //更新相册
         if (SelectionSpec.getInstance().refresh) {
-            new Thread(){
+            thread = new Thread() {
                 @Override
                 public void run() {
                     super.run();
                     Cursor query = getContext().getContentResolver().query(external, projection, selection, SELECTION_ALL_ARGS, null);
-                    if (query!=null){
+                    if (query != null) {
                         List<String> zeroSize = new ArrayList<>();
                         try {
                             while (query.moveToNext()) {
+                                if (isInterrupted()) break;
                                 String name = query.getString(1);
-                                int size=query.getInt(2);
-                                if (size!=0) continue;
+                                int size = query.getInt(2);
+                                if (size != 0) continue;
                                 String path = query.getString(3);
                                 System.out.println(name + " " + path);
                                 zeroSize.add(path);
                             }
-                            MediaScannerConnection.scanFile(requireContext(), zeroSize.toArray(new String[0]), null, (path, uri) -> {});
-                        }finally {
+                            MediaScannerConnection.scanFile(requireContext(), zeroSize.toArray(new String[0]), null, (path, uri) -> {
+                            });
+                        } finally {
                             query.close();
                         }
                     }
                 }
-            }.start();
+            };
 
         }
     }
@@ -169,6 +172,9 @@ public class MediaSelectionFragment extends Fragment implements
     public void onDestroyView() {
         super.onDestroyView();
         mAlbumMediaCollection.destroy();
+        if (thread!=null && thread.isAlive() && !thread.isInterrupted()){
+            thread.interrupt();
+        }
     }
 
     public void refreshMediaGrid() {
