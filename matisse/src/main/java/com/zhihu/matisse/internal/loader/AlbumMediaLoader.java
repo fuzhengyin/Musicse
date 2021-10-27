@@ -23,6 +23,7 @@ import android.database.MergeCursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import androidx.annotation.NonNull;
 import androidx.loader.content.CursorLoader;
 
 import com.zhihu.matisse.internal.entity.Album;
@@ -47,7 +48,13 @@ public class AlbumMediaLoader extends CursorLoader {
             "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
                     + " OR "
                     + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?)"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0";
+                    + ignoreSizeNull();
+
+    @NonNull
+    private static String ignoreSizeNull() {
+        if(SelectionSpec.getInstance().ignoreSizeNull) return " AND " + MediaStore.MediaColumns.SIZE + "> 0"; else return "";
+    }
+
     private static final String[] SELECTION_ALL_ARGS = {
             String.valueOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE),
             String.valueOf(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO),
@@ -57,7 +64,7 @@ public class AlbumMediaLoader extends CursorLoader {
     // === params for album ALL && showSingleMediaType: true ===
     private static final String SELECTION_ALL_FOR_SINGLE_MEDIA_TYPE =
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0";
+                    + ignoreSizeNull();
 
     private static String[] getSelectionArgsForSingleMediaType(int mediaType) {
         return new String[]{String.valueOf(mediaType)};
@@ -71,7 +78,7 @@ public class AlbumMediaLoader extends CursorLoader {
                     + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?)"
                     + " AND "
                     + " bucket_id=?"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0";
+                    + ignoreSizeNull();
 
     private static String[] getSelectionAlbumArgs(String albumId) {
         return new String[]{
@@ -87,7 +94,7 @@ public class AlbumMediaLoader extends CursorLoader {
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
                     + " AND "
                     + " bucket_id=?"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0";
+                    + ignoreSizeNull();
 
     private static String[] getSelectionAlbumArgsForSingleMediaType(int mediaType, String albumId) {
         return new String[]{String.valueOf(mediaType), albumId};
@@ -99,7 +106,7 @@ public class AlbumMediaLoader extends CursorLoader {
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
                     + " AND "
                     + MediaStore.MediaColumns.MIME_TYPE + "=?"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0";
+                    + ignoreSizeNull();
 
     private static String[] getSelectionArgsForGifType(int mediaType) {
         return new String[]{String.valueOf(mediaType), "image/gif"};
@@ -113,7 +120,7 @@ public class AlbumMediaLoader extends CursorLoader {
                     + " bucket_id=?"
                     + " AND "
                     + MediaStore.MediaColumns.MIME_TYPE + "=?"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0";
+                    + ignoreSizeNull();
 
     private static String[] getSelectionAlbumArgsForGifType(int mediaType, String albumId) {
         return new String[]{String.valueOf(mediaType), albumId, "image/gif"};

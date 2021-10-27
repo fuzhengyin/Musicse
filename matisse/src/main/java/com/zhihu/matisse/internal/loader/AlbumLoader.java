@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 
+import androidx.annotation.NonNull;
 import androidx.loader.content.CursorLoader;
 
 import com.zhihu.matisse.MimeType;
@@ -73,13 +74,19 @@ public class AlbumLoader extends CursorLoader {
             "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
                     + " OR "
                     + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?)"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0"
+                    + ignoreSizeNull()
                     + ") GROUP BY (bucket_id";
+
+    @NonNull
+    private static String ignoreSizeNull() {
+        if(SelectionSpec.getInstance().ignoreSizeNull) return " AND " + MediaStore.MediaColumns.SIZE + "> 0"; else return "";
+    }
+
     private static final String SELECTION_29 =
             "(" + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
                     + " OR "
                     + MediaStore.Files.FileColumns.MEDIA_TYPE + "=?)"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0";
+                    + ignoreSizeNull();
     private static final String[] SELECTION_ARGS = {
             String.valueOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE),
             String.valueOf(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO),
@@ -89,11 +96,11 @@ public class AlbumLoader extends CursorLoader {
     // === params for showSingleMediaType: true ===
     private static final String SELECTION_FOR_SINGLE_MEDIA_TYPE =
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0"
+                    + ignoreSizeNull()
                     + ") GROUP BY (bucket_id";
     private static final String SELECTION_FOR_SINGLE_MEDIA_TYPE_29 =
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0";
+                    + ignoreSizeNull();
 
     private static String[] getSelectionArgsForSingleMediaType(int mediaType) {
         return new String[]{String.valueOf(mediaType)};
@@ -103,12 +110,12 @@ public class AlbumLoader extends CursorLoader {
     // === params for showSingleMediaType: true ===
     private static final String SELECTION_FOR_SINGLE_MEDIA_GIF_TYPE =
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0"
+                    + ignoreSizeNull()
                     + " AND " + MediaStore.MediaColumns.MIME_TYPE + "=?"
                     + ") GROUP BY (bucket_id";
     private static final String SELECTION_FOR_SINGLE_MEDIA_GIF_TYPE_29 =
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=?"
-                    + " AND " + MediaStore.MediaColumns.SIZE + ">0"
+                    + ignoreSizeNull()
                     + " AND " + MediaStore.MediaColumns.MIME_TYPE + "=?";
 
     private static String[] getSelectionArgsForSingleMediaGifType(int mediaType) {

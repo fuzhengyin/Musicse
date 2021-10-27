@@ -74,13 +74,34 @@ public final class SelectionCreator {
             MediaStore.MediaColumns.DATE_ADDED
     })
     @interface ORDERBYTIME{}
+
+    /**
+     * 设置根据什么因素进行排序。默认为 date added
+     * @param orderByP 查看 {@link ORDERBYTIME}
+     * @return {@link SelectionCreator} for fluent API.
+     */
     public SelectionCreator orderBy(@ORDERBYTIME String orderByP) {
         mSelectionSpec.orderBy = orderByP;
         return this;
     }
 
+    /**
+     * 打开相册时是否进行刷新。功能当前不稳定
+     * @param refresh 如果为true，会进行刷新
+     * @return {@link SelectionCreator} for fluent API.
+     */
     public SelectionCreator refresh(boolean refresh) {
         mSelectionSpec.refresh = refresh;
+        return this;
+    }
+
+    /**
+     * 是否筛选size 为null 的资源
+     * @param ignore 如果为true，会忽略size 为null 的资源，可能会造成有些图片无法显示的为题。默认为false
+     * @return {@link SelectionCreator} for fluent API.
+     */
+    public SelectionCreator ignoreSizeNull(boolean ignore){
+        mSelectionSpec.ignoreSizeNull = ignore;
         return this;
     }
 

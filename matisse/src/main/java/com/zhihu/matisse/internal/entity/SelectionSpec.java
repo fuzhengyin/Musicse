@@ -66,6 +66,7 @@ public final class SelectionSpec {
     public String orderBy;
     public String sortOrder;
     public boolean refresh;
+    public boolean ignoreSizeNull;
 
     private SelectionSpec() {
     }
@@ -106,6 +107,7 @@ public final class SelectionSpec {
         orderBy = MediaStore.MediaColumns.DATE_ADDED;
         sortOrder = "DESC";
         refresh = false;
+        ignoreSizeNull = false;
     }
 
     public boolean isSingleSelection(int collectionType) {

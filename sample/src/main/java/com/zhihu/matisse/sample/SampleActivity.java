@@ -101,7 +101,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                             Log.e("onSelected", "onSelected: pathList=" + pathList);
                         })
                         .orderBy(MediaStore.Images.Media.DATE_ADDED)
-                        .refresh(true)
+                        .ignoreSizeNull(true)
                         .showSingleMediaType(true)
                         .originalEnable(true)
                         .maxOriginalSize(10)
