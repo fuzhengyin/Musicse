@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.zhihu.matisse.sample">
+          package="com.fuzhengyin.musicse.sample">
 
     <application
         android:allowBackup="true"
@@ -23,7 +23,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.zhihu.matisse.sample.SampleActivity"
+            android:name="com.fuzhengyin.musicse.sample.SampleActivity"
             android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -33,12 +33,12 @@
         </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.zhihu.matisse.sample.fileprovider"
+            android:authorities="com.fuzhengyin.musicse.sample.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths_public"></meta-data>
+                android:resource="@xml/file_paths_public" />
         </provider>
     </application>
 

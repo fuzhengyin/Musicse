@@ -24,7 +24,7 @@ gen/
 out/
 
 # Gradle build files
-matisse/build
+musicse/build
 sample/build
 
 
@@ -44,3 +44,4 @@ captures/
 
 # Keystore files
 *.jks
+/matisse/build/
